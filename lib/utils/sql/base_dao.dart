@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:carros/pages/favoritos/db_helper.dart';
-import 'package:carros/pages/favoritos/entity.dart';
+import 'package:carros/utils/sql/db_helper.dart';
+import 'package:carros/utils/sql/entity.dart';
 import 'package:sqflite/sqflite.dart';
 
 // Data Access Object
@@ -19,12 +19,17 @@ abstract class BaseDAO<T extends Entity> {
     return id;
   }
 
-  Future<List<T>> findAll() async {
+  Future<List<T>> query(String sql, [List<dynamic> arguments]) async {
     final dbClient = await db;
 
-    final list = await dbClient.rawQuery('select * from $tableName');
+    final list = await dbClient.rawQuery(sql, arguments);
+    print("list: $list");
 
     return list.map<T>((json) => fromJson(json)).toList();
+  }
+
+  Future<List<T>> findAll() {
+    return query('select * from $tableName');
   }
 
   Future<T> findById(int id) async {
