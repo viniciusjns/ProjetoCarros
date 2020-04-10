@@ -1,4 +1,6 @@
-class Carro {
+import 'package:carros/pages/favoritos/entity.dart';
+
+class Carro extends Entity {
   int _id;
   String _nome;
   String _tipo;
@@ -70,7 +72,8 @@ class Carro {
     _longitude = json['longitude'];
   }
 
-  Map<String, dynamic> toJson() {
+  @override
+  Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this._id;
     data['nome'] = this._nome;

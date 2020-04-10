@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carros/pages/carro/carro.dart';
 import 'package:carros/pages/carro/carro_page.dart';
 import 'package:carros/utils/nav.dart';
@@ -25,8 +26,8 @@ class CarrosListView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Center(
-                      child: Image.network(
-                        c.urlFoto ??
+                      child: CachedNetworkImage(
+                        imageUrl: c.urlFoto ??
                             "https://www.movehostel.com/storage/app/Hostels/875dd630-62a2-11e9-b73e-c39e14307f6e/defaulthostel.png",
                         width: 250,
                       ),
