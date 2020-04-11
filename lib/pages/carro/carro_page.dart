@@ -1,6 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carros/pages/api_response.dart';
+import 'package:carros/pages/carro/carro_form_page.dart';
+import 'package:carros/pages/carro/carros_api.dart';
 import 'package:carros/pages/carro/loremipsum_api.dart';
 import 'package:carros/pages/favoritos/favorito_service.dart';
+import 'package:carros/utils/alert.dart';
+import 'package:carros/utils/nav.dart';
 import 'package:carros/widgets/text.dart';
 import 'package:flutter/material.dart';
 
@@ -78,7 +83,8 @@ class _CarroPageState extends State<CarroPage> {
       child: ListView(
         children: <Widget>[
           CachedNetworkImage(
-              imageUrl:widget.carro.urlFoto
+            imageUrl: carro.urlFoto ??
+                "https://www.movehostel.com/storage/app/Hostels/875dd630-62a2-11e9-b73e-c39e14307f6e/defaulthostel.png",
           ),
           _bloco1(),
           Divider(),
@@ -153,8 +159,10 @@ class _CarroPageState extends State<CarroPage> {
   _onClickPopupMenu(String value) {
     switch (value) {
       case "Editar":
+        push(context, CarroFormPage(carro: carro));
         break;
       case "Deletar":
+        _deletar();
         break;
       case "Share":
         break;
@@ -167,6 +175,18 @@ class _CarroPageState extends State<CarroPage> {
     setState(() {
       color = favorito ? Colors.red : Colors.grey;
     });
+  }
+
+  void _deletar() async {
+    ApiResponse<bool> response = await CarrosApi.delete(carro);
+
+    if (response.ok) {
+      alert(context, "Carro deletado com sucesso", callback: () {
+        pop(context);
+      });
+    } else {
+      alert(context, response.msg);
+    }
   }
 
   void _onClickShare() {}
