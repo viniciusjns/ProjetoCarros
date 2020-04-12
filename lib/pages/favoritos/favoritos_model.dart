@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 class FavoritosModel extends ChangeNotifier {
   List<Carro> carros = [];
 
-  void getCarros() async {
+  Future<List<Carro>> getCarros() async {
     carros = await FavoritoService.getCarros();
 
     notifyListeners();
+
+    return carros;
   }
 }
