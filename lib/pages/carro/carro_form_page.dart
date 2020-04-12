@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carros/pages/api_response.dart';
 import 'package:carros/pages/carro/carros_api.dart';
@@ -7,6 +9,7 @@ import 'package:carros/widgets/app_button.dart';
 import 'package:carros/widgets/app_text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'carro.dart';
 
@@ -29,6 +32,8 @@ class _CarroFormPageState extends State<CarroFormPage> {
   int _radioIndex = 0;
 
   var _showProgress = false;
+
+  File _file;
 
   Carro get carro => widget.carro;
 
@@ -119,14 +124,22 @@ class _CarroFormPageState extends State<CarroFormPage> {
   }
 
   _headerFoto() {
-    return carro != null
-        ? CachedNetworkImage(
-            imageUrl: carro.urlFoto,
-          )
-        : Image.asset(
-            "assets/images/camera.png",
-            height: 150,
-          );
+    return InkWell(
+      onTap: _onClickFoto,
+      child: _file != null
+          ? Image.file(
+              _file,
+              height: 150,
+            )
+          : carro != null
+              ? CachedNetworkImage(
+                  imageUrl: carro.urlFoto,
+                )
+              : Image.asset(
+                  "assets/images/camera.png",
+                  height: 150,
+                ),
+    );
   }
 
   _radioTipo() {
@@ -192,6 +205,15 @@ class _CarroFormPageState extends State<CarroFormPage> {
     }
   }
 
+  void _onClickFoto() async {
+    File file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (file != null) {
+      setState(() {
+        this._file = file;
+      });
+    }
+  }
+
   _onClickSalvar() async {
     if (!_formKey.currentState.validate()) {
       return;
@@ -211,7 +233,7 @@ class _CarroFormPageState extends State<CarroFormPage> {
 
     print("Salvar o carro $c");
 
-    ApiResponse<bool> response = await CarrosApi.save(c);
+    ApiResponse<bool> response = await CarrosApi.save(c, _file);
 
     if (response.ok) {
       alert(context, "Carro salvo com sucesso", callback: () {
