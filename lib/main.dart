@@ -1,6 +1,7 @@
 import 'package:carros/pages/favoritos/favoritos_bloc.dart';
 import 'package:carros/pages/favoritos/favoritos_model.dart';
 import 'package:carros/pages/splash/splash_page.dart';
+import 'package:carros/utils/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +14,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        Provider<EventBus>(
+          create: (context) => EventBus(),
+          dispose: (context, bus) => bus.dispose(),
+        ),
         ChangeNotifierProvider<FavoritosModel>(
           create: (context) => FavoritosModel()
         )
