@@ -2,6 +2,8 @@ import 'package:carros/utils/event_bus.dart';
 import 'package:carros/utils/sql/entity.dart';
 import 'dart:convert' as convert;
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class Carro extends Entity {
   int _id;
   String _nome;
@@ -91,6 +93,13 @@ class Carro extends Entity {
   String toJson() {
     String json = convert.json.encode(toMap());
     return json;
+  }
+
+  latlng() {
+    return LatLng(
+      latitude == null || latitude.isEmpty ? 0.0 : double.parse(latitude),
+      longitude == null || latitude.isEmpty ? 0.0 : double.parse(longitude)
+    );
   }
 
   @override

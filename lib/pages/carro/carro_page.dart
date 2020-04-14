@@ -3,12 +3,16 @@ import 'package:carros/pages/api_response.dart';
 import 'package:carros/pages/carro/carro_form_page.dart';
 import 'package:carros/pages/carro/carros_api.dart';
 import 'package:carros/pages/carro/loremipsum_api.dart';
+import 'package:carros/pages/carro/mapa_page.dart';
+import 'package:carros/pages/carro/video_page.dart';
 import 'package:carros/pages/favoritos/favorito_service.dart';
 import 'package:carros/utils/alert.dart';
 import 'package:carros/utils/event_bus.dart';
 import 'package:carros/utils/nav.dart';
 import 'package:carros/widgets/text.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'carro.dart';
 
@@ -47,11 +51,15 @@ class _CarroPageState extends State<CarroPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.place),
-            onPressed: _onClickMapa,
+            onPressed: () {
+              _onClickMapa(context);
+            },
           ),
           IconButton(
             icon: Icon(Icons.videocam),
-            onPressed: _onClickVideo,
+            onPressed: () {
+              _onClickVideo(context);
+            },
           ),
           PopupMenuButton<String>(
             onSelected: (String value) => _onClickPopupMenu(value),
@@ -121,7 +129,9 @@ class _CarroPageState extends State<CarroPage> {
             ),
             IconButton(
               icon: Icon(Icons.share),
-              onPressed: _onClickShare,
+              onPressed: () {
+                _onClickShare(carro);
+              },
             ),
           ],
         )
@@ -153,9 +163,26 @@ class _CarroPageState extends State<CarroPage> {
     );
   }
 
-  void _onClickMapa() {}
+  void _onClickMapa(context) {
+    if (carro.latitude != null && carro.longitude != null) {
+      push(context, MapaPage(carro));
+    } else {
+      alert(context, "Este carro não possui nenhuma lat/long");
+    }
+  }
 
-  void _onClickVideo() {}
+  void _onClickVideo(BuildContext context) {
+    if (carro.urlVideo != null && carro.urlVideo.isNotEmpty) {
+//      launch(carro.urlVideo);
+      push(context, VideoPage(carro));
+    } else {
+      alert(context, "Este carro não possui nenhum vídeo");
+    }
+  }
+
+  void _onClickShare(Carro carro) {
+    Share.share(carro.urlFoto);
+  }
 
   _onClickPopupMenu(String value) {
     switch (value) {
@@ -166,6 +193,7 @@ class _CarroPageState extends State<CarroPage> {
         _deletar();
         break;
       case "Share":
+        _onClickShare(carro);
         break;
     }
   }
@@ -183,7 +211,8 @@ class _CarroPageState extends State<CarroPage> {
 
     if (response.ok) {
       alert(context, "Carro deletado com sucesso", callback: () {
-        EventBus.get(context).sendEvent(CarroEvent("carro_deletado", carro.tipo));
+        EventBus.get(context)
+            .sendEvent(CarroEvent("carro_deletado", carro.tipo));
 
         pop(context);
       });
@@ -191,8 +220,6 @@ class _CarroPageState extends State<CarroPage> {
       alert(context, response.msg);
     }
   }
-
-  void _onClickShare() {}
 
   @override
   void dispose() {
