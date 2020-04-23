@@ -17,14 +17,14 @@ class CarrosApi {
   static Future<List<Carro>> getCarros(String tipoCarro) async {
     try {
       var url =
-          'https://carros-springboot.herokuapp.com/api/v2/carros/tipo/$tipoCarro';
+          'https://carros-springboot.herokuapp.com/api/v1/carros/tipo/$tipoCarro';
       print("GET > $url");
       var response = await http.get(url);
       String json = response.body;
 
       List list = convert.json.decode(json);
 
-      final carros = list.map((c) => Carro.fromJson(c)).toList();
+      List<Carro> carros = list.map((c) => Carro.fromJson(c)).toList();
 
       return carros;
     } catch (error) {
@@ -43,7 +43,7 @@ class CarrosApi {
         }
       }
 
-      var url = 'https://carros-springboot.herokuapp.com/api/v2/carros/';
+      var url = 'https://carros-springboot.herokuapp.com/api/v1/carros/';
       if (carro.id != null) {
         url += "${carro.id}";
       }
@@ -66,25 +66,25 @@ class CarrosApi {
         Carro c = Carro.fromJson(mapResponse);
         print("Novo carro: ${c.id}");
 
-        return ApiResponse.ok(true);
+        return ApiResponse.ok(result: true);
       }
 
       if (response.body == null || response.body.isEmpty) {
-        return ApiResponse.error("Não foi possível salvar o carro");
+        return ApiResponse.error(msg: "Não foi possível salvar o carro");
       }
 
       Map mapResponse = convert.json.decode(response.body);
 
-      return ApiResponse.error(mapResponse["error"]);
+      return ApiResponse.error(msg: mapResponse["error"]);
     } catch (error) {
       print(error);
-      return ApiResponse.error("Não foi possível salvar o carro");
+      return ApiResponse.error(msg: "Não foi possível salvar o carro");
     }
   }
 
   static delete(Carro carro) async {
     try {
-      var url = 'https://carros-springboot.herokuapp.com/api/v2/carros/${carro.id}';
+      var url = 'https://carros-springboot.herokuapp.com/api/v1/carros/${carro.id}';
 
       print("DELETE > $url");
 
@@ -94,13 +94,13 @@ class CarrosApi {
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        return ApiResponse.ok(true);
+        return ApiResponse.ok(result: true);
       }
 
-      return ApiResponse.error("Não foi possível deletar o carro");
+      return ApiResponse.error(msg: "Não foi possível deletar o carro");
     } catch (error) {
       print(error);
-      return ApiResponse.error("Não foi possível deletar o carro");
+      return ApiResponse.error(msg: "Não foi possível deletar o carro");
     }
   }
 }

@@ -61,8 +61,8 @@ class Usuario {
     _nome = json['nome'];
     _email = json['email'];
     _urlFoto = json['urlFoto'];
-    _token = json['token'];
-    _roles = json['roles'].cast<String>();
+//    _token = json['token'];
+//    _roles = json['roles'].cast<String>();
   }
 
   Map<String, dynamic> toJson() {

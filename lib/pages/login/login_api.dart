@@ -27,14 +27,14 @@ class LoginApi {
         final user = Usuario.fromJson(mapResponse);
         user.save();
 
-        return ApiResponse.ok(user);
+        return ApiResponse.ok(result: user);
       }
 
-      return ApiResponse.error(mapResponse["error"]);
+      return ApiResponse.error(msg: mapResponse["error"]);
     } catch (error, exception) {
       print("Erro no login $error > $exception");
 
-      return ApiResponse.error("Ocorreu um erro inesperado. Tente novamente mais tarde!");
+      return ApiResponse.error(msg: "Ocorreu um erro inesperado. Tente novamente mais tarde!");
     }
   }
 }
