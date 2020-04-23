@@ -1,7 +1,12 @@
 import 'package:carros/pages/api_response.dart';
+import 'package:carros/pages/favoritos/favorito_service.dart';
+import 'package:carros/pages/login/usuario.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+String firebaseUserUid;
 
 class FirebaseService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -17,13 +22,15 @@ class FirebaseService {
       print("Firebase Foto: ${fuser.photoUrl}");
 
       // Cria um usuario do app
-//      final user = Usuario(
-//        nome: fuser.displayName,
-//        login: fuser.email,
-//        email: fuser.email,
-//        urlFoto: fuser.photoUrl,
-//      );
-//      user.save();
+      final user = Usuario(
+        nome: fuser.displayName,
+        login: fuser.email,
+        email: fuser.email,
+        urlFoto: fuser.photoUrl,
+      );
+      user.save();
+
+      saveUser(fuser);
 
       // Resposta genérica
       return ApiResponse.ok();
@@ -56,13 +63,15 @@ class FirebaseService {
       print("Firebase Foto: ${fuser.photoUrl}");
 
       // Cria um usuario do app
-//      final user = Usuario(
-//        nome: fuser.displayName,
-//        login: fuser.email,
-//        email: fuser.email,
-//        urlFoto: fuser.photoUrl,
-//      );
-//      user.save();
+      final user = Usuario(
+        nome: fuser.displayName,
+        login: fuser.email,
+        email: fuser.email,
+        urlFoto: fuser.photoUrl,
+      );
+      user.save();
+
+      saveUser(fuser);
 
       // Resposta genérica
       return ApiResponse.ok();
@@ -73,6 +82,8 @@ class FirebaseService {
   }
 
   Future<void> logout() async {
+//    FavoritoService().deleteCarros();
+
     await _auth.signOut();
     await _googleSignIn.signOut();
   }
@@ -105,6 +116,19 @@ class FirebaseService {
       }
 
       return ApiResponse.error(msg: "Não foi possível criar um usuário.");
+    }
+  }
+
+  void saveUser(FirebaseUser fuser) async {
+    if (fuser != null) {
+      firebaseUserUid = fuser.uid;
+      DocumentReference refUser = Firestore.instance.collection("users").document(firebaseUserUid);
+      refUser.setData({
+        'nome': fuser.displayName,
+        'email': fuser.email,
+        'login': fuser.email,
+        'urlFoto': fuser.photoUrl
+      });
     }
   }
 }
